@@ -15,11 +15,9 @@ def handler(request_data):
     path = config.ROOT_DIR + urlparse(request.url).path
     if request.url.endswith("/"):
         path += "index.html"
-    print(path)
     path_is_exist = os.path.exists(path)
 
     # response
-    response: Response
     if request.method not in REQUEST_METHODS:
         response = Response(method=request.method, protocol=request.protocol, status=405)
 
@@ -32,14 +30,16 @@ def handler(request_data):
     elif (not request.is_valid) or (not path_is_exist):
         response = Response(method=request.method, protocol=request.protocol, status=404)
     else:
-        size = os.path.getsize(path)
         content_type = mimetypes.guess_type(path)[0]
+        with open(path, 'rb') as stream:
+            data = stream.read()
+        if len(data) == 0:
+            print(path, content_type, data, len(data))
         response = Response(method=request.method, protocol=request.protocol, status=200,
-                            content_type=content_type, content_length=size)
+                            content_type=content_type, content_length=len(data))
 
     headers = response.get_headers()
     if request.method == 'GET' and response.status == 200:
-        with open(path, 'rb') as stream:
-            return [headers, stream.read()]
+        return [headers, data]
     else:
         return [headers]
