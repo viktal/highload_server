@@ -1,5 +1,6 @@
 import socket
 import config
+import logging
 from Worker import Worker
 
 
@@ -11,6 +12,8 @@ class Server:
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         # self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+        logging.basicConfig(level=logging.INFO)
+        logging.info(f'Server start on {config.SERVER_ADDRESS}')
         self.socket.bind(config.SERVER_ADDRESS)
         self.socket.listen(500)
         self.socket.setblocking(False)
