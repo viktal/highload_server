@@ -15,6 +15,7 @@ def handler(request_data):
     path = config.ROOT_DIR + urlparse(request.url).path
     if request.url.endswith("/"):
         path += "index.html"
+    print(path)
     path_is_exist = os.path.exists(path)
 
     # response
